@@ -342,7 +342,11 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	cpufreq_frequency_table_get_attr(freq_table, policy->cpu);
 
 	policy->min = policy->cpuinfo.min_freq;
+#if defined(CONFIG_OMAP_OCFREQ_1400) || defined(CONFIG_OMAP_OCFREQ_1600) || defined(CONFIG_OMAP_OCFREQ_1800) || defined(CONFIG_OMAP_OCFREQ_2000)
+	policy->max = 1200000;
+#else
 	policy->max = policy->cpuinfo.max_freq;
+#endif
 	policy->cur = omap_getspeed(policy->cpu);
 
 	for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++)
@@ -422,6 +426,18 @@ struct freq_attr omap_cpufreq_attr_screen_off_freq = {
 	.show = show_screen_off_freq,
 	.store = store_screen_off_freq,
 };
+
+#if defined(CONFIG_OMAP_SCALING_FREQS) || defined(CONFIG_OMAP_SCREENOFF_MAXFREQ)
+static struct freq_attr *omap_cpufreq_attr[] = {
+#ifdef CONFIG_OMAP_SCALING_FREQS
+          &cpufreq_freq_attr_scaling_available_freqs,
+#endif
+#ifdef CONFIG_OMAP_SCREENOFF_MAXFREQ
+          &omap_cpufreq_attr_screen_off_freq,
+#endif
+NULL,
+};
+#endif
 
 /*
  * Variable GPU OC - sysfs interface for cycling through different GPU top speeds
