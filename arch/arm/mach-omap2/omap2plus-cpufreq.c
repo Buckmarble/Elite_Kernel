@@ -427,17 +427,6 @@ struct freq_attr omap_cpufreq_attr_screen_off_freq = {
 	.store = store_screen_off_freq,
 };
 
-#if defined(CONFIG_OMAP_SCALING_FREQS) || defined(CONFIG_OMAP_SCREENOFF_MAXFREQ)
-static struct freq_attr *omap_cpufreq_attr[] = {
-#ifdef CONFIG_OMAP_SCALING_FREQS
-          &cpufreq_freq_attr_scaling_available_freqs,
-#endif
-#ifdef CONFIG_OMAP_SCREENOFF_MAXFREQ
-          &omap_cpufreq_attr_screen_off_freq,
-#endif
-NULL,
-};
-#endif
 
 /*
  * Variable GPU OC - sysfs interface for cycling through different GPU top speeds
@@ -481,13 +470,18 @@ static struct freq_attr gpu_oc = {
 	.store = store_gpu_oc,
 };
 
-
+#if defined(CONFIG_OMAP_SCALING_FREQS) || defined(CONFIG_OMAP_SCREENOFF_MAXFREQ)
 static struct freq_attr *omap_cpufreq_attr[] = {
+#ifdef CONFIG_OMAP_SCALING_FREQS
 	&cpufreq_freq_attr_scaling_available_freqs,
+#endif
+#ifdef CONFIG_OMAP_SCREENOFF_MAXFREQ
 	&omap_cpufreq_attr_screen_off_freq,
+#endif
 	&gpu_oc,
 	NULL,
 };
+#endif
 
 static struct cpufreq_driver omap_driver = {
 	.flags		= CPUFREQ_STICKY,
